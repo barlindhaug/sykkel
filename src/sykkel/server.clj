@@ -8,13 +8,14 @@
            (GET "/" []
               (str
                 "<h1>Iterate sykkel challenge 2015</h1>"
-                "<ul>"
+                "<p>21. april - 19. juni</p>"
+                "<ol style=\"list-style-type: decimal;\">"
                 (reduce
                   (fn [list result]
-                    (str list "<li>" (:name result) " " (:distance result) "</li>"))
+                    (str list "<li>" (:name result) " <strong>" (:distance result) "km</strong></li>"))
                   ""
                   (core/go 2015))
-                  "</ul>"))
+                  "</ol>"))
            (route/not-found "<h1>Page not found</h1>"))
 
 (defonce ^{:static true} server (atom nil))
