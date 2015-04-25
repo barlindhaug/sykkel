@@ -28,12 +28,11 @@
         start))
     activities))
 
-(defn extract-athlete-id [activities]
+(defn extract-athlete-name [activities]
   (map
     (fn [athlete-activities]
       (let [athlete-info (:athlete athlete-activities)]
         (assoc athlete-activities
-          :athlete_id (:id athlete-info)
           :name (str (:firstname athlete-info) " " (:lastname athlete-info)))))
     activities))
 
@@ -59,7 +58,7 @@
   (->> (get-file)
        (filter-rides)
        (filter-period start-date)
-       (extract-athlete-id)
+       (extract-athlete-name)
        (group-by-athletes)
        (sum-distance-per-athlete)
        (sort-by-distance)))
