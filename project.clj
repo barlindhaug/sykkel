@@ -5,7 +5,8 @@
                  [postgresql "9.1-901.jdbc4"]
                  [clj-http "0.9.2"]
                  [clj-time "0.9.0"]
-                 [compojure "1.3.1"]
+                 [compojure "1.3.3"]
+                 [ring/ring-defaults "0.1.4"]
                  [ring/ring-jetty-adapter "1.3.2"]]
   :plugins [[lein-ring "0.8.10"]]
   :ring {:handler sykkel.server/app
