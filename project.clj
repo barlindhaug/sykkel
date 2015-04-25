@@ -1,6 +1,8 @@
 (defproject sykkel "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/data.json "0.2.5"]
+                 [org.clojure/java.jdbc "0.3.6"]
+                 [postgresql "9.1-901.jdbc4"]
                  [clj-http "0.9.2"]
                  [clj-time "0.9.0"]
                  [compojure "1.3.1"]
