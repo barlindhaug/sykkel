@@ -63,6 +63,3 @@
        (group-by-athletes)
        (sum-distance-per-athlete)
        (sort-by-distance)))
-
-(defn extract [skiing-activities]
-  (map #(select-keys % [:distance :start_date_local]) skiing-activities))
