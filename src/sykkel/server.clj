@@ -14,7 +14,7 @@
                   (fn [list result]
                     (str list "<li>" (:name result) " <strong>" (:distance result) "km</strong></li>"))
                   ""
-                  (core/go 2015))
+                  (core/go))
                   "</ol>"))
            (route/not-found "<h1>Page not found</h1>"))
 

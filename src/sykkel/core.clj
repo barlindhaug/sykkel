@@ -8,18 +8,13 @@
 (def auth-token (System/getenv "STRAVA_API_KEY"))
 (def start-date (time/date-time 2015 04 21))
 
-(defn get-file
-  ([year] (get-file year 1))
-  ([year page]
-    (:body
-      (client/get activities-url
-                  {:query-params {
-                                  :per_page 200
-                                  :page page}
-                   :headers
-                                 {"Authorization" (str "Bearer " auth-token)}
-                   :accept       :json
-                   :as           :json}))))
+(defn get-file []
+  (:body
+    (client/get activities-url
+                {:query-params {:per_page 200}
+                 :headers {"Authorization" (str "Bearer " auth-token)}
+                 :accept :json
+                 :as :json})))
 
 
 (defn filter-rides [activities]
@@ -60,8 +55,8 @@
 (defn sort-by-distance [results]
   (reverse (sort-by :distance results)))
 
-(defn go [year]
-  (->> (get-file year)
+(defn go []
+  (->> (get-file)
        (filter-rides)
        (filter-period start-date)
        (extract-athlete-id)
