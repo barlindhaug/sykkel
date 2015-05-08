@@ -2,7 +2,6 @@
   (:require [clj-http.client :as client]
             [clj-time.core :as time]
             [clj-time.format :as time-format]
-            [clj-time.coerce :as time-corece]
             [clojure.data.json :as json]
             [sykkel.db :as db]))
 
@@ -12,8 +11,11 @@
 (def auth-token (System/getenv "STRAVA_API_KEY"))
 (def start-date (time/date-time 2015 04 21))
 
-(defn activities-url []
+(defn club-activities-url []
   (str base-url "clubs/64726/activities"))
+
+(defn athlete-activities-url []
+  (str base-url "athlete/activities"))
 
 (defn get-file
   ([url]
@@ -27,7 +29,10 @@
         :as :json}))))
 
 (defn get-activities []
-  (get-file (activities-url)))
+  (get-file (club-activities-url)))
+
+(defn get-athlete-activities [athlete-token]
+  (get-file (athlete-activities-url) athlete-token))
 
 (defn oauth-token-from-code [code]
   (let [result (client/post oauth-url {:form-params {:client_id "5814"
@@ -67,6 +72,22 @@
         {:id id :activities activities :name name}))
     (group-by :id activities)))
 
+(defn find-activities [{:keys [activities token]}]
+  (if token
+    (get-athlete-activities token)
+    activities))
+
+(defn handle-athletes-activities [athletes]
+  (map (fn [athlete]
+         (let [activities (find-activities athlete)
+               filtered-activities (->>
+                                     (filter-period start-date activities)
+                                     (filter-rides))]
+           (assoc athlete
+             :activities filtered-activities))
+         )
+    athletes))
+
 (defn check-token-for-athlete [athletes]
   (map (fn [athlete]
          (assoc athlete
@@ -90,11 +111,10 @@
 
 (defn go []
   (->> (get-activities)
-    (filter-rides)
-    (filter-period start-date)
     (extract-athlete-name)
     (group-by-athletes)
     (check-token-for-athlete)
+    (handle-athletes-activities)
     (sum-distance-per-athlete)
     (sort-by-distance)))
 
