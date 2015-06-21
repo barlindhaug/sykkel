@@ -10,6 +10,7 @@
 
 (def auth-token (System/getenv "STRAVA_API_KEY"))
 (def start-date (time/date-time 2015 04 21))
+(def end-date (time/date-time 2015 06 20))
 
 (defn club-activities-url []
   (str base-url "clubs/64726/activities"))
@@ -48,12 +49,14 @@
 (defn filter-rides [activities]
   (filter #(= (:type %) "Ride") activities))
 
-(defn filter-period [start activities]
+(defn filter-period [start end activities]
   (filter
     (fn [activity]
-      (time/after?
-        (time-format/parse (:start_date_local activity))
-        start))
+      (let [activity-start (time-format/parse (:start_date_local activity))]
+        (and
+          (time/after? activity-start start)
+          (time/before? activity-start end)
+          )))
     activities))
 
 (defn extract-athlete-name [activities]
@@ -81,7 +84,7 @@
   (map (fn [athlete]
          (let [activities (find-activities athlete)
                filtered-activities (->>
-                                     (filter-period start-date activities)
+                                     (filter-period start-date end-date activities)
                                      (filter-rides))]
            (assoc athlete
              :activities filtered-activities))
