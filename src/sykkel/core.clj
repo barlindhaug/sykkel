@@ -112,6 +112,9 @@
 (defn sort-by-distance [results]
   (reverse (sort-by :distance results)))
 
+(defn get-total [results]
+  (reduce + (map #(:distance %) results)))
+
 (defn go []
   (->> (get-activities)
     (extract-athlete-name)
