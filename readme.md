@@ -1,9 +1,10 @@
 # Iterate Sykkel Challenge
 
-## Database
+## Setup
+### Database
     psql
     create user "app-sykkel" with password 'sykkel';
-    create database "app-sykkel"
+    create database "app-sykkel";
 
 exit
 
@@ -18,3 +19,5 @@ exit
     export DB_PORT="5432
     export DB_HOST="localhost"
 
+## Development
+    lein ring server
