@@ -46,68 +46,51 @@
      :name (str firstname " " lastname)
      :token (:access_token account-info)}))
 
-(defn filter-rides [activities]
-  (filter #(= (:type %) "Ride") activities))
+(defn rides-filter [activity]
+  (= (:type activity) "Ride"))
 
-(defn filter-period [start end activities]
-  (filter
-    (fn [activity]
-      (let [activity-start (time-format/parse (:start_date_local activity))]
-        (and
-          (time/after? activity-start start)
-          (time/before? activity-start end)
-          )))
-    activities))
+(defn period-filter [start end]
+  (fn [activity]
+    (let [activity-start (time-format/parse (:start_date_local activity))]
+      (and
+        (time/after? activity-start start)
+        (time/before? activity-start end)))))
 
-(defn extract-athlete-name [activities]
-  (map
-    (fn [athlete-activities]
-      (let [athlete-info (:athlete athlete-activities)]
-        (assoc athlete-activities
-          :id (:id athlete-info)
-          :name (str (:firstname athlete-info) " " (:lastname athlete-info)))))
-    activities))
+(defn extract-athlete-name [athlete-activities]
+  (let [athlete-info (:athlete athlete-activities)]
+    (assoc athlete-activities
+      :id (:id athlete-info)
+      :name (str (:firstname athlete-info) " " (:lastname athlete-info)))))
 
-(defn group-by-athletes [activities]
-  (map
-    (fn [[id activities]]
-      (let [name (:name (first activities))]
-        {:id id :activities activities :name name}))
-    (group-by :id activities)))
+(defn add-athlete-name [[id activities]]
+  (let [name (:name (first activities))]
+    {:id id :activities activities :name name}))
 
 (defn find-activities [{:keys [activities token]}]
   (if token
     (get-athlete-activities token)
     activities))
 
-(defn handle-athletes-activities [athletes]
-  (map (fn [athlete]
-         (let [activities (find-activities athlete)
-               filtered-activities (->>
-                                     (filter-period start-date end-date activities)
-                                     (filter-rides))]
-           (assoc athlete
-             :activities filtered-activities))
-         )
-    athletes))
+(defn handle-athletes-activities [athlete]
+  (let [activities (find-activities athlete)
+        filtered-activities (->>
+                              (filter (period-filter start-date end-date) activities)
+                              (filter rides-filter))]
+    (assoc athlete
+      :activities filtered-activities)))
 
-(defn check-token-for-athlete [athletes]
-  (map (fn [athlete]
-         (assoc athlete
-           :token (db/user-token (:id athlete))))
-    athletes))
+(defn check-token-for-athlete [athlete]
+  (assoc athlete
+    :token (db/user-token (:id athlete))))
 
 (defn sum [activities keyword]
   (reduce + (map #(keyword %) activities)))
 
-(defn sum-distance-per-athlete [athletes]
-  (map
-    (fn [athlete]
-      (assoc athlete
-        :distance (-> (sum (:activities athlete) :distance)
-                      (/ 1000)
-                      (int))))
-    athletes))
+(defn sum-distance-per-athlete [athlete]
+  (assoc athlete
+    :distance (-> (sum (:activities athlete) :distance)
+                  (/ 1000)
+                  (int))))
 
 (defn sort-by-distance [results]
   (reverse (sort-by :distance results)))
@@ -117,11 +100,12 @@
 
 (defn go []
   (->> (get-activities)
-    (extract-athlete-name)
-    (group-by-athletes)
-    (check-token-for-athlete)
-    (handle-athletes-activities)
-    (sum-distance-per-athlete)
+    (map extract-athlete-name)
+    (group-by :id)
+    (map add-athlete-name)
+    (map check-token-for-athlete)
+    (map handle-athletes-activities)
+    (map sum-distance-per-athlete)
     (sort-by-distance)))
 
 (defn fetch-oauth-token [code]
