@@ -9,8 +9,8 @@
 (def oauth-url "https://www.strava.com/oauth/token")
 
 (def auth-token (System/getenv "STRAVA_API_KEY"))
-(def start-date (time/date-time 2015 04 21))
-(def end-date (time/date-time 2015 06 20))
+(def start-date (time/date-time 2015 12 01))
+(def end-date (time/date-time 2015 12 31))
 
 (defn club-activities-url []
   (str base-url "clubs/64726/activities"))
