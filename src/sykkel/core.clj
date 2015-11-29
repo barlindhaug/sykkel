@@ -18,6 +18,9 @@
 (defn athlete-activities-url []
   (str base-url "athlete/activities"))
 
+(defn athlete-stats-url [athlete-id]
+  (str base-url "athletes/" athlete-id "/stats"))
+
 (defn get-file
   ([url]
    (get-file url auth-token))
@@ -34,6 +37,9 @@
 
 (defn get-athlete-activities [athlete-token]
   (get-file (athlete-activities-url) athlete-token))
+
+(defn get-athlete-stats [{athlete-id :strava_id token :token}]
+  (get-file (athlete-stats-url athlete-id) token))
 
 (defn oauth-token-from-code [code]
   (let [result (client/post oauth-url {:form-params {:client_id "5814"
@@ -79,6 +85,14 @@
     (assoc athlete
       :activities filtered-activities)))
 
+(defn handle-athlete-stats [athlete]
+  (let [stats (get-athlete-stats athlete)]
+    (assoc athlete
+      :distance (-> (:ytd_ride_totals stats)
+                    (:distance)
+                    (/ 1000)
+                    (int)))))
+
 (defn check-token-for-athlete [athlete]
   (assoc athlete
     :token (db/user-token (:id athlete))))
@@ -107,6 +121,11 @@
     (map handle-athletes-activities)
     (map sum-distance-per-athlete)
     (sort-by-distance)))
+
+(defn year-to-date []
+  (->> (db/users)
+       (map handle-athlete-stats)
+       (sort-by-distance)))
 
 (defn fetch-oauth-token [code]
   (db/insert-user (oauth-token-from-code code)))
