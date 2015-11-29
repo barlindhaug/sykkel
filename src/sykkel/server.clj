@@ -41,6 +41,8 @@
                  "<a href=\"https://www.strava.com/oauth/authorize?client_id=5814&response_type=code&redirect_uri=https://sykkel.app.iterate.no/connected\">"
                  "<img src=\"http://strava.github.io/api/images/ConnectWithStrava.png\">"
                  "</a>"
+                 "<br />"
+                 "<a href=\"https://github.com/barlindhaug/sykkel\">GitHub</a>"
                  )))
            (GET "/connected" [code error]
              (handle-strava-token code error))
