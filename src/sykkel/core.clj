@@ -78,6 +78,10 @@
     (get-athlete-activities token)
     activities))
 
+(defn to-timestamp [datestring]
+  (time-coerce/to-timestamp
+    (time-format/parse datestring)))
+
 (defn update-activity-in-db [activity]
   (db/insert-activity
     (assoc
@@ -128,10 +132,6 @@
 
 (defn get-total [results]
   (reduce + (map #(:distance %) results)))
-
-(defn to-timestamp [date]
-  (time-coerce/to-timestamp
-    (time-format/parse date)))
 
 (defn go []
   (->> (get-activities)
