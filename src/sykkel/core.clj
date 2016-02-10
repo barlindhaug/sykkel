@@ -42,17 +42,6 @@
     (group-by :athlete-id)
     (update-athlete-activities)))
 
-(defn handle-athlete-stats [athlete]
-  (let [stats (strava/get-athlete-stats athlete)]
-    (assoc athlete
-      :distance (-> (:ytd_ride_totals stats)
-                    (:distance)
-                    (/ 1000)
-                    (int)))))
-
-(defn check-token-for-athlete [athlete]
-  (assoc athlete
-    :token (db/user-token (:id athlete))))
 
 (defn sum [activities keyword]
   (reduce + (map #(keyword %) activities)))
@@ -75,12 +64,6 @@
     (map add-user-data)
     (map sum-distance-per-athlete)
     (sort-by-distance)))
-
-(defn year-to-date []
-  (->> (db/users)
-       (filter #(:token %))
-       (map handle-athlete-stats)
-       (sort-by-distance)))
 
 (defn fetch-oauth-token [code]
   (db/insert-user (strava/oauth-token-from-code code)))

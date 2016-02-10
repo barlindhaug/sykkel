@@ -39,20 +39,26 @@
                       data)
                    "</ol>"
                    "<br />"))
-                  (let [data (core/year-to-date)]
+                  (let [start-date (time/date-time 2016 01 01)
+                        end-date (time/date-time 2017 01 01)
+                        activity-type "Ride"
+                        data (core/go start-date end-date activity-type)]
                     (str
                      "<h1>Iterate sykkel challenge 2016</h1>"
                      "<h2>\"Hele 2016\"</h2>"
                      "<h3> Totalt: <strong>"(core/get-total data) "km</strong></h3>"
                      "<ol style=\"list-style-type: decimal;\">"
-                     (reduce (fn [list result]
-                               (str
-                                list
-                                "<li>"
-                                (:name result) " <strong>" (:distance result) "km</strong>"
-                                "</li>"))
-                             ""
-                             data)
+                     (reduce
+                       (fn [list result]
+                         (let [color (if (:token result) "green" "red")]
+                           (str
+                            list
+                            "<li>"
+                            (:name result) " <strong>" (:distance result) "km</strong>"
+                            " <span style=\"color: " color ";\">●</span>"
+                            "</li>")))
+                       ""
+                       data)
                      "</ol>"
                      "<br />"))
                   (let [start-date (time/date-time 2015 01 01)

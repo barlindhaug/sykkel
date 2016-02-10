@@ -15,9 +15,6 @@
 (def athlete-activities-url
   (str base-url "athlete/activities"))
 
-(defn athlete-stats-url [athlete-id]
-  (str base-url "athletes/" athlete-id "/stats"))
-
 (defn call-api
   ([url]
    (call-api url auth-token))
@@ -39,9 +36,6 @@
 
 (defn get-club-activities []
   (call-api club-activities-url))
-
-(defn get-athlete-stats [{athlete-id :strava_id token :token}]
-  (call-api (athlete-stats-url athlete-id) token))
 
 (defn oauth-token-from-code [code]
   (let [result (client/post oauth-url {:form-params {:client_id "5814"
