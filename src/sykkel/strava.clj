@@ -55,12 +55,11 @@
      :token (:access_token account-info)}))
 
 (defn get-athlete-activities-with-pagination [athlete-token activities page]
-  (let [new-activities (call-api athlete-activities-url athlete-token page)]
+  (let [new-activities (call-api athlete-activities-url athlete-token page)
+        all-activities (concat activities new-activities)]
     (if (= (count new-activities) max-page-size)
-      (recur athlete-token
-             (concat activities new-activities)
-             (+ 1 page))
-      activities)))
+      (recur athlete-token all-activities (+ 1 page))
+      all-activities)))
 
 (defn get-athlete-activities [athlete-token]
   (let [start-page 1]
