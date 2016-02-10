@@ -4,7 +4,8 @@
             [compojure.route :as route]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.defaults :refer :all]
-            [sykkel.core :as core]))
+            [sykkel.core :as core]
+            [sykkel.update-activities :as update-activities]))
 
 (defn handle-strava-token [code error]
   (if (some? code) (core/fetch-oauth-token code))
@@ -15,7 +16,7 @@
 
 (defroutes app
            (GET "/" []
-               (core/update-recent-club-activities)
+               (update-activities/update-recent-club-activities)
                (str
                  (let [start-date (time/date-time 2015 12 01)
                        end-date (time/date-time 2016 02 29)
@@ -101,7 +102,7 @@
              (str "added "
                   (reduce (fn [string count] (str string count " "))
                           ""
-                          (core/update-all-activities))
+                          (update-activities/update-all-activities))
                   "activities"))
            (route/not-found "<h1>Page not found</h1>"))
 
