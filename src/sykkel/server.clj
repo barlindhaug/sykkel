@@ -18,7 +18,7 @@
                (str
                  (let [data (core/go)]
                    (str
-                    "<h1>Iterate <strong>vinter</strong> sykkel challenge 2015/16</h1>"
+                    "<h1>Iterate vintersykkel challenge 2015/16</h1>"
                     "<h2>\"Februar 2016\"</h2>"
                     "<h3> Totalt: <strong>"(core/get-total data) "km</strong></h3>"
                     "<ol style=\"list-style-type: decimal;\">"
@@ -37,8 +37,8 @@
                    "<br />"))
                   (let [data (core/year-to-date)]
                     (str
-                     "<h1>Iterate sykkel challenge 2015</h1>"
-                     "<h2>\"Hele 2015\"</h2>"
+                     "<h1>Iterate sykkel challenge 2016</h1>"
+                     "<h2>\"Hele 2016\"</h2>"
                      "<h3> Totalt: <strong>"(core/get-total data) "km</strong></h3>"
                      "<ol style=\"list-style-type: decimal;\">"
                      (reduce (fn [list result]
