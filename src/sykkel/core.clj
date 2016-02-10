@@ -29,11 +29,6 @@
         token (:token user)]
     {:id athlete-id :activities activities :name name :token token}))
 
-(defn find-activities [{:keys [activities token]}]
-  (if token
-    (strava/get-athlete-activities token)
-    activities))
-
 (defn update-activity-in-db [activity]
   (db/insert-activity
     (assoc
