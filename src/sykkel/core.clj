@@ -96,3 +96,12 @@
 
 (defn fetch-oauth-token [code]
   (db/insert-user (strava/oauth-token-from-code code)))
+
+(defn get-all-activities-for-auth-users [{:keys [token]}]
+  (let [activities (strava/get-athlete-activities token)]
+    (dorun (map update-activity-in-db activities))))
+
+(defn update-all-activities []
+  (->> (db/users)
+       (filter #(:token %))
+       (map get-all-activities-for-auth-users)))

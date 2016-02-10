@@ -64,6 +64,8 @@
                  )))
            (GET "/connected" [code error]
              (handle-strava-token code error))
+           (GET "/update-all-activities" []
+             (core/update-all-activities))
            (route/not-found "<h1>Page not found</h1>"))
 
 (defonce ^{:static true} server (atom nil))
