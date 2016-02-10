@@ -16,7 +16,7 @@ exit
     export STRAVA_CLIENT_SECRET=""
     export DB_PASS="sykkel"
     export DB_USER="app-sykkel"
-    export DB_PORT="5432
+    export DB_PORT="5432"
     export DB_HOST="localhost"
 
 ## Development
