@@ -14,6 +14,7 @@
 
 (defroutes app
            (GET "/" []
+               (core/update-recent-club-activities)
                (str
                  (let [data (core/go)]
                    (str
