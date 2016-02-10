@@ -84,7 +84,7 @@
   (reduce + (map #(:distance %) results)))
 
 (defn go []
-  (->> (strava/get-activities)
+  (->> (strava/get-club-activities)
     (map extract-athlete-name)
     (group-by :id)
     (map add-athlete-name)

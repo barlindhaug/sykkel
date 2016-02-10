@@ -28,7 +28,7 @@
         :accept :json
         :as :json}))))
 
-(defn get-activities []
+(defn get-club-activities []
   (call-api club-activities-url))
 
 (defn get-athlete-activities [athlete-token]
