@@ -39,13 +39,12 @@
             (jdbc/query (create-connection-definition)
               ["SELECT token FROM users where strava_id = ?" strava-id]))))
 
-(defn activities
-  ([]
-    (jdbc/query (create-connection-definition)
-                ["SELECT * FROM activities"]))
-  ([athlete-id]
-    (jdbc/query (create-connection-definition)
-                ["SELECT * FROM activities WHERE athlete_id = ?" athlete-id])))
+(defn activities [start-date end-date activity-type]
+    (let [start-date-sql (time-coerce/to-sql-time start-date)
+          end-date-sql (time-coerce/to-sql-time end-date)]
+      (jdbc/query (create-connection-definition)
+                  ["SELECT * FROM activities WHERE start_date >= ? and start_date < ? AND type = ?"
+                   start-date-sql end-date-sql activity-type])))
 
 (defn insert-row [table row]
   (try

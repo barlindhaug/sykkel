@@ -1,5 +1,6 @@
 (ns sykkel.server
-  (:require [compojure.core :refer :all]
+  (:require [clj-time.core :as time]
+            [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.defaults :refer :all]
@@ -16,7 +17,10 @@
            (GET "/" []
                (core/update-recent-club-activities)
                (str
-                 (let [data (core/go)]
+                 (let [start-date (time/date-time 2016 02 01)
+                       end-date (time/date-time 2016 02 29)
+                       activity-type "Ride"
+                       data (core/go start-date end-date activity-type)]
                    (str
                     "<h1>Iterate vintersykkel challenge 2015/16</h1>"
                     "<h2>\"Februar 2016\"</h2>"

@@ -1,21 +1,6 @@
 (ns sykkel.core
-  (:require [clj-time.core :as time]
-            [clj-time.format :as time-format]
-            [sykkel.db :as db]
+  (:require [sykkel.db :as db]
             [sykkel.strava :as strava]))
-
-(def start-date (time/date-time 2016 02 01))
-(def end-date (time/date-time 2016 02 29))
-
-(defn rides-filter [activity]
-  (= (:type activity) "Ride"))
-
-(defn period-filter [start end]
-  (fn [activity]
-    (let [activity-start (db/to-datetime (:start_date activity))]
-      (and
-        (time/after? activity-start start)
-        (time/before? activity-start end)))))
 
 (defn extract-athlete-name [activity]
   (let [athlete-info (:athlete activity)]
@@ -57,15 +42,6 @@
     (group-by :athlete-id)
     (update-athlete-activities)))
 
-(defn handle-athletes-activities [athlete]
-  (let [activities (:activities athlete)
-        filtered-activities (->>
-                              (filter (period-filter start-date end-date) activities)
-                              (filter rides-filter))]
-    ;; (dorun (map update-activity-in-db activities))
-    (assoc athlete
-      :activities filtered-activities)))
-
 (defn handle-athlete-stats [athlete]
   (let [stats (strava/get-athlete-stats athlete)]
     (assoc athlete
@@ -93,11 +69,10 @@
 (defn get-total [results]
   (reduce + (map #(:distance %) results)))
 
-(defn go []
-  (->> (db/activities)
+(defn go [start-date end-date activity-type]
+  (->> (db/activities start-date end-date activity-type)
     (group-by :athlete_id)
     (map add-user-data)
-    (map handle-athletes-activities)
     (map sum-distance-per-athlete)
     (sort-by-distance)))
 
