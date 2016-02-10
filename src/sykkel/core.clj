@@ -12,7 +12,7 @@
 
 (defn period-filter [start end]
   (fn [activity]
-    (let [activity-start (time-format/parse (:start_date_local activity))]
+    (let [activity-start (db/to-datetime (:start_date activity))]
       (and
         (time/after? activity-start start)
         (time/before? activity-start end)))))
@@ -23,9 +23,11 @@
       :id (:id athlete-info)
       :name (str (:firstname athlete-info) " " (:lastname athlete-info)))))
 
-(defn add-athlete-name [[id activities]]
-  (let [name (:name (first activities))]
-    {:id id :activities activities :name name}))
+(defn add-user-data [[athlete-id activities]]
+  (let [user (db/user athlete-id)
+        name (:name user)
+        token (:token user)]
+    {:id athlete-id :activities activities :name name :token token}))
 
 (defn find-activities [{:keys [activities token]}]
   (if token
@@ -41,11 +43,11 @@
       :start_date (db/to-timestamp (:start_date activity)))))
 
 (defn handle-athletes-activities [athlete]
-  (let [activities (find-activities athlete)
+  (let [activities (:activities athlete)
         filtered-activities (->>
                               (filter (period-filter start-date end-date) activities)
                               (filter rides-filter))]
-    (dorun (map update-activity-in-db activities))
+    ;; (dorun (map update-activity-in-db activities))
     (assoc athlete
       :activities filtered-activities)))
 
@@ -84,12 +86,9 @@
   (reduce + (map #(:distance %) results)))
 
 (defn go []
-  (->> (strava/get-club-activities)
-    (map extract-athlete-name)
-    (group-by :id)
-    (map add-athlete-name)
-    (map check-token-for-athlete)
-    (map insert-athlete)
+  (->> (db/activities)
+    (group-by :athlete_id)
+    (map add-user-data)
     (map handle-athletes-activities)
     (map sum-distance-per-athlete)
     (sort-by-distance)))

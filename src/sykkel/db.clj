@@ -14,6 +14,9 @@
   (time-coerce/to-timestamp
     (time-format/parse datestring)))
 
+(defn to-datetime [timestamp]
+  (time-coerce/from-sql-time timestamp))
+
 (defn create-connection-definition []
   (let [{:keys [user password host port]} (options)]
     {:classname "org.postgresql.Driver"
@@ -22,6 +25,10 @@
      :user user
      :password password}))
 
+(defn user [athlete-id]
+  (first
+    (jdbc/query (create-connection-definition)
+      ["SELECT * FROM users WHERE strava_id = ?" athlete-id])))
 
 (defn users []
   (jdbc/query (create-connection-definition)
@@ -31,6 +38,14 @@
   (:token (first
             (jdbc/query (create-connection-definition)
               ["SELECT token FROM users where strava_id = ?" strava-id]))))
+
+(defn activities
+  ([]
+    (jdbc/query (create-connection-definition)
+                ["SELECT * FROM activities"]))
+  ([athlete-id]
+    (jdbc/query (create-connection-definition)
+                ["SELECT * FROM activities WHERE athlete_id = ?" athlete-id])))
 
 (defn insert-row [table row]
   (try
