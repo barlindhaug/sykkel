@@ -46,6 +46,10 @@
                   ["SELECT * FROM activities WHERE start_date >= ? and start_date < ? AND type = ?"
                    start-date-sql end-date-sql activity-type])))
 
+(defn challenges []
+  (jdbc/query (create-connection-definition)
+              ["SELECT * FROM challenges ORDER BY start_date DESC"]))
+
 (defn insert-row [table row]
   (try
     (jdbc/with-db-transaction [transaction (create-connection-definition)]

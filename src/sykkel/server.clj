@@ -1,11 +1,13 @@
 (ns sykkel.server
-  (:require [clj-time.core :as time]
+  (:require [clj-time.coerce :as time-coerce]
+            [clj-time.core :as time]
             [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.defaults :refer :all]
             [sykkel.auth :as auth]
             [sykkel.core :as core]
+            [sykkel.db :as db]
             [sykkel.update-activities :as update-activities]))
 
 (defn handle-strava-token [code error]
@@ -15,77 +17,38 @@
          "<p>Alt ok</p>")
     "<a href=\"/\">Tilbake</a>"))
 
+(defn challenge-html [challenge]
+  (let [name (:name challenge)
+        description (:description challenge)
+        start-date (time-coerce/from-date (:start_date challenge))
+        end-date (time-coerce/from-date (:end_date challenge))
+        activity-type (:activity_type challenge)
+        data (core/go start-date end-date activity-type)]
+    (str
+      "<h1>" name "</h1>"
+      (when description
+        (str "<h2>" description "</h2>"))
+      "<h3> Totalt: <strong>"(core/get-total data) "km</strong></h3>"
+      "<ol style=\"list-style-type: decimal;\">"
+      (reduce
+        (fn [list result]
+          (let [color (if (:token result) "green" "red")]
+            (str
+              list
+              "<li>"
+              (:name result) " <strong>" (:distance result) "km</strong>"
+              " <span style=\"color: " color ";\">●</span>"
+              "</li>")))
+        ""
+        data)
+      "</ol>")))
+
 (defroutes app
            (GET "/" []
                (update-activities/update-recent-club-activities)
                (str
-                 (let [start-date (time/date-time 2015 12 01)
-                       end-date (time/date-time 2016 02 29)
-                       activity-type "Ride"
-                       data (core/go start-date end-date activity-type)]
-                   (str
-                    "<h1>Iterate vintersykkel challenge 2015/16</h1>"
-                    "<h2>\"Desember 2015 - Februar 2016\"</h2>"
-                    "<h3> Totalt: <strong>"(core/get-total data) "km</strong></h3>"
-                    "<ol style=\"list-style-type: decimal;\">"
-                    (reduce
-                      (fn [list result]
-                        (let [color (if (:token result) "green" "red")]
-                          (str
-                            list
-                            "<li>"
-                            (:name result) " <strong>" (:distance result) "km</strong>"
-                            " <span style=\"color: " color ";\">●</span>"
-                            "</li>")))
-                      ""
-                      data)
-                   "</ol>"
-                   "<br />"))
-                  (let [start-date (time/date-time 2016 01 01)
-                        end-date (time/date-time 2017 01 01)
-                        activity-type "Ride"
-                        data (core/go start-date end-date activity-type)]
-                    (str
-                     "<h1>Iterate sykkel challenge 2016</h1>"
-                     "<h2>\"Hele 2016\"</h2>"
-                     "<h3> Totalt: <strong>"(core/get-total data) "km</strong></h3>"
-                     "<ol style=\"list-style-type: decimal;\">"
-                     (reduce
-                       (fn [list result]
-                         (let [color (if (:token result) "green" "red")]
-                           (str
-                            list
-                            "<li>"
-                            (:name result) " <strong>" (:distance result) "km</strong>"
-                            " <span style=\"color: " color ";\">●</span>"
-                            "</li>")))
-                       ""
-                       data)
-                     "</ol>"
-                     "<br />"))
-                  (let [start-date (time/date-time 2015 01 01)
-                        end-date (time/date-time 2016 01 01)
-                        activity-type "Ride"
-                        data (core/go start-date end-date activity-type)]
-                   (str
-                    "<h1>Iterate sykkel challenge 2015</h1>"
-                    "<h2>\"Hele 2015\"</h2>"
-                    "<h3> Totalt: <strong>"(core/get-total data) "km</strong></h3>"
-                    "<ol style=\"list-style-type: decimal;\">"
-                    (reduce
-                      (fn [list result]
-                        (let [color (if (:token result) "green" "red")]
-                          (str
-                            list
-                            "<li>"
-                            (:name result) " <strong>" (:distance result) "km</strong>"
-                            " <span style=\"color: " color ";\">●</span>"
-                            "</li>")))
-                      ""
-                      data)
-                   "</ol>"
-                   "<br />"))
-                  (str
+                 (apply str (map challenge-html (db/challenges)))
+                 (str
                    "Koblet til Strava: <span style=\"color:green;\">●</span> "
                    "<br />"
                    "<h2>Koble til Strava</h2>"
