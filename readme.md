@@ -21,3 +21,11 @@ exit
 
 ## Development
     lein ring server
+
+## Deployment
+ - Add app.iterate.no as a remote:
+    git remote add iterate dokku@app.iterate.no:sykkel
+
+
+ - Push to app.iterate.no:
+    git push iterate master
