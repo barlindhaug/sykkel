@@ -33,10 +33,12 @@
               ["SELECT token FROM users where strava_id = ?" strava-id]))))
 
 (defn insert-row [table row]
-  (jdbc/with-db-transaction [transaction (create-connection-definition)]
-    (let [result (jdbc/update! transaction table row ["strava_id = ?" (:strava_id row)])]
-      (if (zero? (first result))
-        (jdbc/insert! transaction table row)))))
+  (try
+    (jdbc/with-db-transaction [transaction (create-connection-definition)]
+      (let [result (jdbc/update! transaction table row ["strava_id = ?" (:strava_id row)])]
+        (if (zero? (first result))
+          (jdbc/insert! transaction table row))))
+    (catch Exception e ((.printStackTrace (.getNextException e))))))
 
 (defn insert-user [user-row]
   (insert-row :users user-row))
