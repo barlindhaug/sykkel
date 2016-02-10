@@ -1,5 +1,7 @@
 (ns sykkel.db
   (:require
+    [clj-time.coerce :as time-coerce]
+    [clj-time.format :as time-format]
     [clojure.java.jdbc :as jdbc]))
 
 (defn options [] {
@@ -7,6 +9,10 @@
   :port (System/getenv "DB_PORT")
   :user (System/getenv "DB_USER")
   :password (System/getenv "DB_PASS")})
+
+(defn to-timestamp [datestring]
+  (time-coerce/to-timestamp
+    (time-format/parse datestring)))
 
 (defn create-connection-definition []
   (let [{:keys [user password host port]} (options)]

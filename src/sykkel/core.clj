@@ -1,6 +1,5 @@
 (ns sykkel.core
   (:require [clj-http.client :as client]
-            [clj-time.coerce :as time-coerce]
             [clj-time.core :as time]
             [clj-time.format :as time-format]
             [clojure.data.json :as json]
@@ -78,17 +77,13 @@
     (get-athlete-activities token)
     activities))
 
-(defn to-timestamp [datestring]
-  (time-coerce/to-timestamp
-    (time-format/parse datestring)))
-
 (defn update-activity-in-db [activity]
   (db/insert-activity
     (assoc
       (select-keys activity [:name :type :distance :moving_time :elapsed_time :total_elevation_gain :average_speed :max_speed])
       :strava_id (:id activity)
       :athlete_id (:id (:athlete activity))
-      :start_date (to-timestamp (:start_date activity)))))
+      :start_date (db/to-timestamp (:start_date activity)))))
 
 (defn handle-athletes-activities [athlete]
   (let [activities (find-activities athlete)
