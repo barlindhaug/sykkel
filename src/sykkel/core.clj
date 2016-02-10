@@ -1,56 +1,11 @@
 (ns sykkel.core
-  (:require [clj-http.client :as client]
-            [clj-time.core :as time]
+  (:require [clj-time.core :as time]
             [clj-time.format :as time-format]
-            [clojure.data.json :as json]
-            [sykkel.db :as db]))
+            [sykkel.db :as db]
+            [sykkel.strava :as strava]))
 
-(def base-url "https://www.strava.com/api/v3/")
-(def oauth-url "https://www.strava.com/oauth/token")
-
-(def auth-token (System/getenv "STRAVA_API_KEY"))
 (def start-date (time/date-time 2016 02 01))
 (def end-date (time/date-time 2016 02 29))
-
-(defn club-activities-url []
-  (str base-url "clubs/64726/activities"))
-
-(defn athlete-activities-url []
-  (str base-url "athlete/activities"))
-
-(defn athlete-stats-url [athlete-id]
-  (str base-url "athletes/" athlete-id "/stats"))
-
-(defn get-file
-  ([url]
-   (get-file url auth-token))
-  ([url token]
-   (:body
-     (client/get url
-       {:query-params {:per_page 200}
-        :headers {"Authorization" (str "Bearer " token)}
-        :accept :json
-        :as :json}))))
-
-(defn get-activities []
-  (get-file (club-activities-url)))
-
-(defn get-athlete-activities [athlete-token]
-  (get-file (athlete-activities-url) athlete-token))
-
-(defn get-athlete-stats [{athlete-id :strava_id token :token}]
-  (get-file (athlete-stats-url athlete-id) token))
-
-(defn oauth-token-from-code [code]
-  (let [result (client/post oauth-url {:form-params {:client_id "5814"
-                                                     :client_secret (System/getenv "STRAVA_CLIENT_SECRET")
-                                                     :code code}})
-        account-info (json/read-str (:body result) :key-fn keyword)
-        athlete-info (:athlete account-info)
-        {:keys [firstname lastname id]} athlete-info]
-    {:strava_id id
-     :name (str firstname " " lastname)
-     :token (:access_token account-info)}))
 
 (defn rides-filter [activity]
   (= (:type activity) "Ride"))
@@ -74,7 +29,7 @@
 
 (defn find-activities [{:keys [activities token]}]
   (if token
-    (get-athlete-activities token)
+    (strava/get-athlete-activities token)
     activities))
 
 (defn update-activity-in-db [activity]
@@ -95,7 +50,7 @@
       :activities filtered-activities)))
 
 (defn handle-athlete-stats [athlete]
-  (let [stats (get-athlete-stats athlete)]
+  (let [stats (strava/get-athlete-stats athlete)]
     (assoc athlete
       :distance (-> (:ytd_ride_totals stats)
                     (:distance)
@@ -129,7 +84,7 @@
   (reduce + (map #(:distance %) results)))
 
 (defn go []
-  (->> (get-activities)
+  (->> (strava/get-activities)
     (map extract-athlete-name)
     (group-by :id)
     (map add-athlete-name)
@@ -146,4 +101,4 @@
        (sort-by-distance)))
 
 (defn fetch-oauth-token [code]
-  (db/insert-user (oauth-token-from-code code)))
+  (db/insert-user (strava/oauth-token-from-code code)))
