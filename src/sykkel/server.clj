@@ -17,13 +17,13 @@
            (GET "/" []
                (core/update-recent-club-activities)
                (str
-                 (let [start-date (time/date-time 2016 02 01)
+                 (let [start-date (time/date-time 2015 12 01)
                        end-date (time/date-time 2016 02 29)
                        activity-type "Ride"
                        data (core/go start-date end-date activity-type)]
                    (str
                     "<h1>Iterate vintersykkel challenge 2015/16</h1>"
-                    "<h2>\"Februar 2016\"</h2>"
+                    "<h2>\"Desember 2015 - Februar 2016\"</h2>"
                     "<h3> Totalt: <strong>"(core/get-total data) "km</strong></h3>"
                     "<ol style=\"list-style-type: decimal;\">"
                     (reduce
