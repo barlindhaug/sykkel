@@ -112,7 +112,8 @@
 
 (defn get-all-activities-for-auth-users [{:keys [token]}]
   (let [activities (strava/get-athlete-activities token)]
-    (dorun (map update-activity-in-db activities))))
+    (dorun (map update-activity-in-db activities))
+    (count activities)))
 
 (defn update-all-activities []
   (->> (db/users)
