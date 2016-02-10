@@ -1,5 +1,6 @@
 (ns sykkel.core
   (:require [clj-http.client :as client]
+            [clj-time.coerce :as time-coerce]
             [clj-time.core :as time]
             [clj-time.format :as time-format]
             [clojure.data.json :as json]
@@ -77,11 +78,20 @@
     (get-athlete-activities token)
     activities))
 
+(defn update-activity-in-db [activity]
+  (db/insert-activity
+    (assoc
+      (select-keys activity [:name :type :distance :moving_time :elapsed_time :total_elevation_gain :average_speed :max_speed])
+      :strava_id (:id activity)
+      :athlete_id (:id (:athlete activity))
+      :start_date (to-timestamp (:start_date activity)))))
+
 (defn handle-athletes-activities [athlete]
   (let [activities (find-activities athlete)
         filtered-activities (->>
                               (filter (period-filter start-date end-date) activities)
                               (filter rides-filter))]
+    (dorun (map update-activity-in-db activities))
     (assoc athlete
       :activities filtered-activities)))
 
@@ -96,6 +106,13 @@
 (defn check-token-for-athlete [athlete]
   (assoc athlete
     :token (db/user-token (:id athlete))))
+
+(defn insert-athlete [athlete]
+  (db/insert-user
+    (assoc
+      (select-keys athlete [:token :name])
+      :strava_id (:id athlete)))
+  athlete)
 
 (defn sum [activities keyword]
   (reduce + (map #(keyword %) activities)))
@@ -112,18 +129,24 @@
 (defn get-total [results]
   (reduce + (map #(:distance %) results)))
 
+(defn to-timestamp [date]
+  (time-coerce/to-timestamp
+    (time-format/parse date)))
+
 (defn go []
   (->> (get-activities)
     (map extract-athlete-name)
     (group-by :id)
     (map add-athlete-name)
     (map check-token-for-athlete)
+    (map insert-athlete)
     (map handle-athletes-activities)
     (map sum-distance-per-athlete)
     (sort-by-distance)))
 
 (defn year-to-date []
   (->> (db/users)
+       (filter #(:token %))
        (map handle-athlete-stats)
        (sort-by-distance)))
 

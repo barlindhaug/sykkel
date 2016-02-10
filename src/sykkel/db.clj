@@ -26,9 +26,14 @@
             (jdbc/query (create-connection-definition)
               ["SELECT token FROM users where strava_id = ?" strava-id]))))
 
+(defn insert-row [table row]
+  (jdbc/with-db-transaction [transaction (create-connection-definition)]
+    (let [result (jdbc/update! transaction table row ["strava_id = ?" (:strava_id row)])]
+      (if (zero? (first result))
+        (jdbc/insert! transaction table row)))))
+
 (defn insert-user [user-row]
-  (let [table :users]
-    (jdbc/with-db-transaction [transaction (create-connection-definition)]
-      (let [result (jdbc/update! transaction table user-row ["strava_id = ?" (:strava_id user-row)])]
-        (if (zero? (first result))
-          (jdbc/insert! transaction table user-row))))))
+  (insert-row :users user-row))
+
+(defn insert-activity [activity-row]
+  (insert-row :activities activity-row))
