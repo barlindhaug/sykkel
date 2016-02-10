@@ -1,10 +1,8 @@
 (ns sykkel.strava
   (:require
-    [clj-http.client :as client]
-    [clojure.data.json :as json]))
+    [clj-http.client :as client]))
 
 (def base-url "https://www.strava.com/api/v3/")
-(def oauth-url "https://www.strava.com/oauth/token")
 
 (def auth-token (System/getenv "STRAVA_API_KEY"))
 (def max-page-size 200)
@@ -36,17 +34,6 @@
 
 (defn get-club-activities []
   (call-api club-activities-url))
-
-(defn oauth-token-from-code [code]
-  (let [result (client/post oauth-url {:form-params {:client_id "5814"
-                                                     :client_secret (System/getenv "STRAVA_CLIENT_SECRET")
-                                                     :code code}})
-        account-info (json/read-str (:body result) :key-fn keyword)
-        athlete-info (:athlete account-info)
-        {:keys [firstname lastname id]} athlete-info]
-    {:strava_id id
-     :name (str firstname " " lastname)
-     :token (:access_token account-info)}))
 
 (defn get-athlete-activities-with-pagination [athlete-token activities page]
   (let [new-activities (call-api athlete-activities-url athlete-token page)

@@ -4,11 +4,12 @@
             [compojure.route :as route]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.defaults :refer :all]
+            [sykkel.auth :as auth]
             [sykkel.core :as core]
             [sykkel.update-activities :as update-activities]))
 
 (defn handle-strava-token [code error]
-  (if (some? code) (core/fetch-oauth-token code))
+  (if (some? code) (auth/fetch-oauth-token code))
   (str (if (= error "access_denied")
          "<p>Du har ikke gitt oss tilgang</p>"
          "<p>Alt ok</p>")

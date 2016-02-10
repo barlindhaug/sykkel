@@ -1,6 +1,5 @@
 (ns sykkel.core
-  (:require [sykkel.db :as db]
-            [sykkel.strava :as strava]))
+  (:require [sykkel.db :as db]))
 
 (defn add-user-data [[athlete-id activities]]
   (let [user (db/user athlete-id)
@@ -30,5 +29,3 @@
     (map sum-distance-per-athlete)
     (sort-by-distance)))
 
-(defn fetch-oauth-token [code]
-  (db/insert-user (strava/oauth-token-from-code code)))
