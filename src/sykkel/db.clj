@@ -34,17 +34,18 @@
   (jdbc/query (create-connection-definition)
               ["SELECT * FROM users"]))
 
-(defn user-token [strava-id]
-  (:token (first
-            (jdbc/query (create-connection-definition)
-              ["SELECT token FROM users where strava_id = ?" strava-id]))))
-
-(defn activities [start-date end-date activity-type]
-    (let [start-date-sql (time-coerce/to-sql-time start-date)
-          end-date-sql (time-coerce/to-sql-time end-date)]
-      (jdbc/query (create-connection-definition)
-                  ["SELECT * FROM activities WHERE start_date >= ? and start_date < ? AND type = ?"
-                   start-date-sql end-date-sql activity-type])))
+(defn challenge-results [challenge-id]
+  (jdbc/query (create-connection-definition)
+              ["SELECT u.name AS name, u.token AS token, TRUNC(SUM(a.distance) / 1000) AS distance
+                FROM activities a, users u, challenges c
+                WHERE a.athlete_id = u.strava_id
+                  AND a.start_date >= c.start_date
+                  AND a.start_date < c.end_date
+                  AND a.type = c.activity_type
+                  AND c.id = ?
+                GROUP BY a.athlete_id, u.name, u.token
+                ORDER BY distance DESC"
+               challenge-id]))
 
 (defn challenges []
   (jdbc/query (create-connection-definition)

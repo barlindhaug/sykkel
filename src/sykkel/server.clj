@@ -20,15 +20,12 @@
 (defn challenge-html [challenge]
   (let [name (:name challenge)
         description (:description challenge)
-        start-date (time-coerce/from-date (:start_date challenge))
-        end-date (time-coerce/from-date (:end_date challenge))
-        activity-type (:activity_type challenge)
-        data (core/go start-date end-date activity-type)]
+        data (core/challenge-results (:id challenge))]
     (str
       "<h1>" name "</h1>"
       (when description
         (str "<h2>" description "</h2>"))
-      "<h3> Totalt: <strong>"(core/get-total data) "km</strong></h3>"
+      "<h3> Totalt: <strong>"(core/sum data :distance) "km</strong></h3>"
       "<ol style=\"list-style-type: decimal;\">"
       (reduce
         (fn [list result]
