@@ -99,7 +99,7 @@
         data (db/challenge-top-results (:id challenge))]
     (str
       "<table class=\"results\">"
-      "<tr><th colspan=\"2\">Navn</th><th>" (field-header field) "</th><th>Tid</th><th>Dato</th></tr>"
+      "<tr class=\"header-row\"><th colspan=\"2\">Navn</th><th>" (field-header field) "</th><th>Tid</th><th>Dato</th></tr>"
       (reduce
         (fn [list result]
           (let [date (time-coerce/from-sql-date (:start_date result))
