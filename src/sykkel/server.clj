@@ -49,7 +49,7 @@
         description (:description challenge)
         data (db/challenge-totals (:id challenge))]
     (str
-      "<h1>" name "</h1>"
+      "<h2>" name "</h2>"
       (when description
         (str "<h2>" description "</h2>"))
       "<h3> Totalt: <strong>"(core/sum data :distance) " km</strong></h3>"
@@ -76,7 +76,7 @@
         field (keyword (:field challenge))
         data (db/challenge-top-results (:id challenge))]
     (str
-      "<h1>" name "</h1>"
+      "<h2>" name "</h2>"
       (when description
         (str "<h2>" description "</h2>"))
       "<ol style=\"list-style-type: decimal;\">"
