@@ -46,8 +46,8 @@
 
 (def footer
   (str
-    "<p>Koblet til Strava: <span style=\"color:green;\">●</span></p>"
     "<h2>Koble til Strava</h2>"
+    "<p>Ikke koblet til Strava: <span style=\"color:red;\">●</span></p>"
     "<p>APIet til Strava gir tilgang til de 200 siste sykkelturene i hver klubb.</p>"
     "<p>For å få tilgang til alle sykkelturene dine må du gi oss lesetilgang til de offentilige dataene dine på strava.</p>"
     "<a href=\"https://www.strava.com/oauth/authorize?client_id=5814&response_type=code&redirect_uri=https://sykkel.app.iterate.no/connected\">"
@@ -73,18 +73,18 @@
       "<tr><th>Navn</th><th>Total avstand</th><th>Lengste tur</th><th>Klatret</th></tr>"
       (reduce
         (fn [list result]
-          (let [color (if (:token result) "green" "red")]
-            (str
-              list
-              "<tr>"
-              "<td>"
-              (:name result)
-              " <span style=\"color: " color ";\">●</span>"
-              "</td>"
-              "<td><strong>" (:distance result) " km</strong></td>"
-              "<td><strong>" (:longest result) " km</strong></td>"
-              "<td><strong>" (:climbed result) " m</strong></td>"
-              "</tr>")))
+          (str
+            list
+            "<tr>"
+            "<td>"
+            (:name result)
+            (when (not (:token result))
+              " <span style=\"color: red;\">●</span>")
+            "</td>"
+            "<td><strong>" (:distance result) " km</strong></td>"
+            "<td><strong>" (:longest result) " km</strong></td>"
+            "<td><strong>" (:climbed result) " m</strong></td>"
+            "</tr>"))
         ""
         data)
       "</table>"
@@ -98,15 +98,15 @@
       "<tr><th>Navn</th><th>" (field-header field) "</th><th>Tid</th><th>Dato</th></tr>"
       (reduce
         (fn [list result]
-          (let [color (if (:token result) "green" "red")
-                date (time-coerce/from-sql-date (:start_date result))
+          (let [date (time-coerce/from-sql-date (:start_date result))
                 moving-time (time/plus (time/today-at 0 0) (time/seconds (:moving_time result)))]
             (str
               list
               "<tr>"
               "<td>"
               (:name result)
-              " <span style=\"color: " color ";\">●</span>"
+              (when (not (:token result))
+                " <span style=\"color: red;\">●</span>")
               "</td>"
               "<td><strong>" (format-field field result) "</strong></td>"
               "<td><strong>" (time-format/unparse time-formatter moving-time) "</strong></td>"
