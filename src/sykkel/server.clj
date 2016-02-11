@@ -24,6 +24,7 @@
 (defn header [current-page]
   (str
    "<div class=\"nav-container\">"
+     "<img src=\"https://dgalywyr863hv.cloudfront.net/pictures/clubs/64726/1467357/1/medium.jpg\" align=\"left\">"
      "<h1 class=\"title\">SYKKL</h1>"
      "<div class=\"nav\">"
        "<a "
