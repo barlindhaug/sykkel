@@ -39,9 +39,13 @@
     (jdbc/query (create-connection-definition)
                 ["SELECT * FROM challenges WHERE id = ?" challenge-id])))
 
-(defn challenges []
-  (jdbc/query (create-connection-definition)
-              ["SELECT * FROM challenges ORDER BY start_date DESC"]))
+(defn challenges
+  ([]
+    (jdbc/query (create-connection-definition)
+                ["SELECT * FROM challenges ORDER BY end_date DESC"]))
+  ([activity-type]
+    (jdbc/query (create-connection-definition)
+                ["SELECT * FROM challenges WHERE activity_type = ? ORDER BY end_date DESC" activity-type])))
 
 (def join-challenges-sql
   " FROM activities a, users u, challenges c

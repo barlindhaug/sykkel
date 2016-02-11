@@ -21,6 +21,12 @@
          "<p>Alt ok</p>")
     "<a href=\"/\">Tilbake</a>"))
 
+(def header
+  (str
+    "<a href=\"ride\">Sykkel</a> | "
+    "<a href=\"run\">L&oslash;ping</a> | "
+    "<a href=\"ski\">Ski</a>"))
+
 (def footer
   (str
     "Koblet til Strava: <span style=\"color:green;\">●</span> "
@@ -92,12 +98,23 @@
     "totals" (challenge-totals-html challenge)
     "top" (challenge-top-html challenge)))
 
+(defn challenges-html [type]
+  (let [challenges (db/challenges type)]
+    (update-activities/update-recent-club-activities)
+    (str
+      header
+      (apply str (map challenge-html (db/challenges type)))
+      footer)))
+
 (defroutes app
            (GET "/" []
-               (update-activities/update-recent-club-activities)
-               (str
-                 (apply str (map challenge-html (db/challenges)))
-                 footer))
+             (challenges-html "Ride"))
+           (GET "/ride" []
+             (challenges-html "Ride"))
+           (GET "/run" []
+             (challenges-html "Run"))
+           (GET "/ski" []
+             (challenges-html "NordicSki"))
            (GET "/connected" [code error]
              (handle-strava-token code error))
            (GET "/update-all-activities" []
