@@ -92,7 +92,7 @@
         ""
         data)
       "</table>"
-      "<strong>Totalt: "(core/sum data :distance) " km</strong>")))
+      "<p><strong>Totalt: "(core/sum data :distance) " km</strong></p>")))
 
 (defn challenge-top-html [challenge]
   (let [field (keyword (:field challenge))
