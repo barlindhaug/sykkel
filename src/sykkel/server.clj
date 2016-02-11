@@ -59,29 +59,33 @@
 (defn challenge-totals-html [challenge]
   (let [data (db/challenge-totals (:id challenge))]
     (str
-      "<ol style=\"list-style-type: decimal;\">"
+      "<table>"
+      "<tr><th>Navn</th><th>Total avstand</th><th>Lengste tur</th><th>Klatret</th></tr>"
       (reduce
         (fn [list result]
           (let [color (if (:token result) "green" "red")]
             (str
               list
-              "<li>"
+              "<tr>"
+              "<td>"
               (:name result)
-              " <strong>" (:distance result) " km</strong> -"
-              " longest ride: <strong>" (:longest result) " km</strong> -"
-              " climbed <strong>" (:climbed result) " m</strong>"
               " <span style=\"color: " color ";\">●</span>"
-              "</li>")))
+              "</td>"
+              "<td><strong>" (:distance result) " km</strong></td>"
+              "<td><strong>" (:longest result) " km</strong></td>"
+              "<td><strong>" (:climbed result) " m</strong></td>"
+              "</tr>")))
         ""
         data)
-      "</ol>"
+      "</table>"
       "<strong>Totalt: "(core/sum data :distance) " km</strong>")))
 
 (defn challenge-top-html [challenge]
   (let [field (keyword (:field challenge))
         data (db/challenge-top-results (:id challenge))]
     (str
-      "<ol style=\"list-style-type: decimal;\">"
+      "<table>"
+      "<tr><th>Navn</th><th>" field "</th><th>Tid</th><th>Dato</th></tr>"
       (reduce
         (fn [list result]
           (let [color (if (:token result) "green" "red")
@@ -89,15 +93,18 @@
                 moving-time (time/plus (time/today-at 0 0) (time/seconds (:moving_time result)))]
             (str
               list
-              "<li>"
-              (:name result) " <strong>" (int (/ (field result) 1000)) " km</strong> - "
-              (time-format/unparse time-formatter moving-time) " - "
-              (time-format/unparse date-formatter date)
+              "<tr>"
+              "<td>"
+              (:name result)
               " <span style=\"color: " color ";\">●</span>"
-              "</li>")))
+              "</td>"
+              "<td><strong>" (int (/ (field result) 1000)) " km</strong></td>"
+              "<td><strong>" (time-format/unparse time-formatter moving-time) "</strong></td>"
+              "<td>" (time-format/unparse date-formatter date) "</td>"
+              "</tr>")))
         ""
         data)
-      "</ol>")))
+      "</table>")))
 
 (defn challenge-html [challenge]
   (let [name (:name challenge)
