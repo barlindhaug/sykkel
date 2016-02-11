@@ -1,0 +1,22 @@
+.nav-container {
+  width: 100%;
+}
+
+.nav {
+  font-size: 30px;
+  margin: 0 auto;
+}
+
+.nav a {
+  color: #000;
+  text-decoration: none;
+  padding: 0 20px;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+.nav a.current {
+  font-weight: bold;
+}

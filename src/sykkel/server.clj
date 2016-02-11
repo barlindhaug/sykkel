@@ -23,9 +23,13 @@
 
 (def header
   (str
-    "<a href=\"ride\">Sykkel</a> | "
-    "<a href=\"run\">L&oslash;ping</a> | "
-    "<a href=\"ski\">Ski</a>"))
+   "<div class=\"nav-container\">"
+     "<div class=\"nav\">"
+       "<a href=\"/ride\">Sykkel</a> | "
+       "<a href=\"/ski\">Ski</a> | "
+       "<a href=\"/run\">L&oslash;ping</a>"
+     "</div>"
+   "</div>"))
 
 (def footer
   (str
@@ -102,9 +106,16 @@
   (let [challenges (db/challenges type)]
     (update-activities/update-recent-club-activities)
     (str
+      "<html>"
+      "<head>"
+      "  <link href=\"/style.css\" rel=\"stylesheet\">"
+      "</head>"
+      "<body>"
       header
       (apply str (map challenge-html (db/challenges type)))
-      footer)))
+      footer
+      "</body>"
+      "</html>")))
 
 (defroutes app
            (GET "/" []
@@ -123,6 +134,7 @@
                           ""
                           (update-activities/update-all-activities))
                   "activities"))
+           (route/resources "/")
            (route/not-found "<h1>Page not found</h1>"))
 
 (defonce ^{:static true} server (atom nil))
