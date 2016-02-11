@@ -70,12 +70,16 @@
   (let [data (db/challenge-totals (:id challenge))]
     (str
       "<table class=\"results\">"
-      "<tr class=\"header-row\"><th>Navn</th><th>Total avstand</th><th>Lengste tur</th><th>Klatret</th></tr>"
+      "<tr class=\"header-row\"><th colspan=\"2\">Navn</th><th>Total avstand</th><th>Lengste tur</th><th>Klatret</th></tr>"
       (reduce
         (fn [list result]
           (str
             list
             "<tr>"
+            "<td>"
+            (when (:picture result)
+              (str "<img src=\"" (:picture result) "\" width=\"32px\" height=\"32px\" style=\"border-radius: 32px\"> "))
+            "</td>"
             "<td>"
             (:name result)
             (when (not (:token result))
@@ -95,7 +99,7 @@
         data (db/challenge-top-results (:id challenge))]
     (str
       "<table class=\"results\">"
-      "<tr><th>Navn</th><th>" (field-header field) "</th><th>Tid</th><th>Dato</th></tr>"
+      "<tr><th colspan=\"2\">Navn</th><th>" (field-header field) "</th><th>Tid</th><th>Dato</th></tr>"
       (reduce
         (fn [list result]
           (let [date (time-coerce/from-sql-date (:start_date result))
@@ -103,6 +107,10 @@
             (str
               list
               "<tr>"
+              "<td>"
+              (when (:picture result)
+                (str "<img src=\"" (:picture result) "\" width=\"32px\" height=\"32px\" style=\"border-radius: 32px\"> "))
+              "</td>"
               "<td>"
               (:name result)
               (when (not (:token result))

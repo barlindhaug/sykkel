@@ -1,6 +1,7 @@
 create table users (
-    strava_id bigint primary key, 
-    name text, 
+    strava_id bigint primary key,
+    name text,
+    picture text,
     token text
 );
 

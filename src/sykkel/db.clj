@@ -60,7 +60,7 @@
         field (:field challenge)
         limit (:results challenge)]
     (jdbc/query (create-connection-definition)
-                [(str "SELECT u.name, u.token, " field ", a.start_date, a.moving_time"
+                [(str "SELECT u.name, u.picture, u.token, " field ", a.start_date, a.moving_time"
                        join-challenges-sql
                       "ORDER BY " field " DESC
                        LIMIT ?")
@@ -68,9 +68,9 @@
 
 (defn challenge-totals [challenge-id]
   (jdbc/query (create-connection-definition)
-              [(str "SELECT u.name AS name, u.token AS token, TRUNC(SUM(a.distance) / 1000) AS distance, TRUNC(MAX(a.distance) / 1000) as longest, SUM(a.moving_time) AS moving_time, TRUNC(SUM(a.total_elevation_gain)) AS climbed"
+              [(str "SELECT u.name, u.picture, u.token, TRUNC(SUM(a.distance) / 1000) AS distance, TRUNC(MAX(a.distance) / 1000) as longest, SUM(a.moving_time) AS moving_time, TRUNC(SUM(a.total_elevation_gain)) AS climbed"
                      join-challenges-sql
-                    "GROUP BY a.athlete_id, u.name, u.token
+                    "GROUP BY a.athlete_id, u.name, u.picture, u.token
                      ORDER BY distance DESC")
                challenge-id]))
 
