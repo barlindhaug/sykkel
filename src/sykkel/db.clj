@@ -64,7 +64,7 @@
 
 (defn challenge-totals [challenge-id]
   (jdbc/query (create-connection-definition)
-              [(str "SELECT u.name AS name, u.token AS token, TRUNC(SUM(a.distance) / 1000) AS distance"
+              [(str "SELECT u.name AS name, u.token AS token, TRUNC(SUM(a.distance) / 1000) AS distance, TRUNC(MAX(a.distance) / 1000) as longest, SUM(a.moving_time) AS moving_time, TRUNC(SUM(a.total_elevation_gain)) AS climbed"
                      join-challenges-sql
                     "GROUP BY a.athlete_id, u.name, u.token
                      ORDER BY distance DESC")

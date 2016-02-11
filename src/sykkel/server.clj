@@ -37,7 +37,10 @@
             (str
               list
               "<li>"
-              (:name result) " <strong>" (:distance result) " km</strong>"
+              (:name result)
+              " <strong>" (:distance result) " km</strong> -"
+              " longest ride: <strong>" (:longest result) " km</strong> -"
+              " climbed <strong>" (:climbed result) " m</strong>"
               " <span style=\"color: " color ";\">●</span>"
               "</li>")))
         ""
