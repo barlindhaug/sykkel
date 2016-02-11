@@ -33,8 +33,7 @@
 
 (def footer
   (str
-    "Koblet til Strava: <span style=\"color:green;\">●</span> "
-    "<br />"
+    "<p>Koblet til Strava: <span style=\"color:green;\">●</span></p>"
     "<h2>Koble til Strava</h2>"
     "<p>APIet til Strava gir tilgang til de 200 siste sykkelturene i hver klubb.</p>"
     "<p>For å få tilgang til alle sykkelturene dine må du gi oss lesetilgang til de offentilige dataene dine på strava.</p>"
@@ -45,14 +44,8 @@
     "<a href=\"https://github.com/barlindhaug/sykkel\">GitHub</a>"))
 
 (defn challenge-totals-html [challenge]
-  (let [name (:name challenge)
-        description (:description challenge)
-        data (db/challenge-totals (:id challenge))]
+  (let [data (db/challenge-totals (:id challenge))]
     (str
-      "<h2>" name "</h2>"
-      (when description
-        (str "<h2>" description "</h2>"))
-      "<h3> Totalt: <strong>"(core/sum data :distance) " km</strong></h3>"
       "<ol style=\"list-style-type: decimal;\">"
       (reduce
         (fn [list result]
@@ -68,17 +61,13 @@
               "</li>")))
         ""
         data)
-      "</ol>")))
+      "</ol>"
+      "<strong>Totalt: "(core/sum data :distance) " km</strong>")))
 
 (defn challenge-top-html [challenge]
-  (let [name (:name challenge)
-        description (:description challenge)
-        field (keyword (:field challenge))
+  (let [field (keyword (:field challenge))
         data (db/challenge-top-results (:id challenge))]
     (str
-      "<h2>" name "</h2>"
-      (when description
-        (str "<h2>" description "</h2>"))
       "<ol style=\"list-style-type: decimal;\">"
       (reduce
         (fn [list result]
@@ -98,9 +87,15 @@
       "</ol>")))
 
 (defn challenge-html [challenge]
-  (case (:type challenge)
-    "totals" (challenge-totals-html challenge)
-    "top" (challenge-top-html challenge)))
+  (let [name (:name challenge)
+        description (:description challenge)]
+    (str
+      "<h2>" name "</h2>"
+      (when description
+        (str "<h3>" description "</h3>"))
+      (case (:type challenge)
+        "totals" (challenge-totals-html challenge)
+        "top" (challenge-top-html challenge)))))
 
 (defn challenges-html [type]
   (let [challenges (db/challenges type)]
