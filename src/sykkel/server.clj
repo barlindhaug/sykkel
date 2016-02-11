@@ -21,6 +21,19 @@
          "<p>Alt ok</p>")
     "<a href=\"/\">Tilbake</a>"))
 
+(def footer
+  (str
+    "Koblet til Strava: <span style=\"color:green;\">●</span> "
+    "<br />"
+    "<h2>Koble til Strava</h2>"
+    "<p>APIet til Strava gir tilgang til de 200 siste sykkelturene i hver klubb.</p>"
+    "<p>For å få tilgang til alle sykkelturene dine må du gi oss lesetilgang til de offentilige dataene dine på strava.</p>"
+    "<a href=\"https://www.strava.com/oauth/authorize?client_id=5814&response_type=code&redirect_uri=https://sykkel.app.iterate.no/connected\">"
+    "<img src=\"http://strava.github.io/api/images/ConnectWithStrava.png\">"
+    "</a>"
+    "<br />"
+    "<a href=\"https://github.com/barlindhaug/sykkel\">GitHub</a>"))
+
 (defn challenge-totals-html [challenge]
   (let [name (:name challenge)
         description (:description challenge)
@@ -84,18 +97,7 @@
                (update-activities/update-recent-club-activities)
                (str
                  (apply str (map challenge-html (db/challenges)))
-                 (str
-                   "Koblet til Strava: <span style=\"color:green;\">●</span> "
-                   "<br />"
-                   "<h2>Koble til Strava</h2>"
-                   "<p>APIet til Strava gir tilgang til de 200 siste sykkelturene i hver klubb.</p>"
-                   "<p>For å få tilgang til alle sykkelturene dine må du gi oss lesetilgang til de offentilige dataene dine på strava.</p>"
-                   "<a href=\"https://www.strava.com/oauth/authorize?client_id=5814&response_type=code&redirect_uri=https://sykkel.app.iterate.no/connected\">"
-                   "<img src=\"http://strava.github.io/api/images/ConnectWithStrava.png\">"
-                   "</a>"
-                   "<br />"
-                   "<a href=\"https://github.com/barlindhaug/sykkel\">GitHub</a>"
-                 )))
+                 footer))
            (GET "/connected" [code error]
              (handle-strava-token code error))
            (GET "/update-all-activities" []
