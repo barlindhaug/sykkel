@@ -69,8 +69,8 @@
 (defn challenge-totals-html [challenge]
   (let [data (db/challenge-totals (:id challenge))]
     (str
-      "<table>"
-      "<tr><th>Navn</th><th>Total avstand</th><th>Lengste tur</th><th>Klatret</th></tr>"
+      "<table class=\"results\">"
+      "<tr class=\"header-row\"><th>Navn</th><th>Total avstand</th><th>Lengste tur</th><th>Klatret</th></tr>"
       (reduce
         (fn [list result]
           (str
@@ -94,7 +94,7 @@
   (let [field (keyword (:field challenge))
         data (db/challenge-top-results (:id challenge))]
     (str
-      "<table>"
+      "<table class=\"results\">"
       "<tr><th>Navn</th><th>" (field-header field) "</th><th>Tid</th><th>Dato</th></tr>"
       (reduce
         (fn [list result]

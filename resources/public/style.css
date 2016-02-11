@@ -25,3 +25,25 @@
 .nav a.current {
   font-weight: bold;
 }
+
+.results {
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.header-row {
+  background-color: #E9E9E9;
+  border-bottom: 1px solid #666;
+}
+
+.results th {
+  padding: 5px 10px;
+}
+
+.results tr:nth-child(odd) {
+  background-color: #EBEBEB;
+}
+
+.results td {
+  padding: 5px 10px;
+}
