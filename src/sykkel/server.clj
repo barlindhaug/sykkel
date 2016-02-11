@@ -12,6 +12,7 @@
             [sykkel.update-activities :as update-activities]))
 
 (def date-formatter (time-format/formatter "d/M yyyy"))
+(def time-formatter (time-format/formatter "HH:mm:ss"))
 
 (defn handle-strava-token [code error]
   (if (some? code) (auth/fetch-oauth-token code))
@@ -56,11 +57,14 @@
       (reduce
         (fn [list result]
           (let [color (if (:token result) "green" "red")
-                date (time-coerce/from-sql-date (:date result))]
+                date (time-coerce/from-sql-date (:start_date result))
+                moving-time (time/plus (time/today-at 0 0) (time/seconds (:moving_time result)))]
             (str
               list
               "<li>"
-              (:name result) " <strong>" (int (/ (field result) 1000)) " km</strong> - " (time-format/unparse date-formatter date)
+              (:name result) " <strong>" (int (/ (field result) 1000)) " km</strong> - "
+              (time-format/unparse time-formatter moving-time) " - "
+              (time-format/unparse date-formatter date)
               " <span style=\"color: " color ";\">●</span>"
               "</li>")))
         ""

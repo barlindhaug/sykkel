@@ -56,7 +56,7 @@
         field (:field challenge)
         limit (:results challenge)]
     (jdbc/query (create-connection-definition)
-                [(str "SELECT u.name AS name, u.token AS token, " field ", a.start_date AS date"
+                [(str "SELECT u.name, u.token, " field ", a.start_date, a.moving_time"
                        join-challenges-sql
                       "ORDER BY " field " DESC
                        LIMIT ?")
