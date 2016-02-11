@@ -56,6 +56,16 @@
     "<br />"
     "<a href=\"https://github.com/barlindhaug/sykkel\">GitHub</a>"))
 
+(defn field-header [field]
+  (case field
+    :distance "Avstand"
+    :total_elevation_gain "Klatret"))
+
+(defn format-field [field result]
+  (case field
+    :distance (str (int (/ (field result) 1000)) " km")
+    :total_elevation_gain (str (int (field result)) " m")))
+
 (defn challenge-totals-html [challenge]
   (let [data (db/challenge-totals (:id challenge))]
     (str
@@ -85,7 +95,7 @@
         data (db/challenge-top-results (:id challenge))]
     (str
       "<table>"
-      "<tr><th>Navn</th><th>" field "</th><th>Tid</th><th>Dato</th></tr>"
+      "<tr><th>Navn</th><th>" (field-header field) "</th><th>Tid</th><th>Dato</th></tr>"
       (reduce
         (fn [list result]
           (let [color (if (:token result) "green" "red")
@@ -98,7 +108,7 @@
               (:name result)
               " <span style=\"color: " color ";\">●</span>"
               "</td>"
-              "<td><strong>" (int (/ (field result) 1000)) " km</strong></td>"
+              "<td><strong>" (format-field field result) "</strong></td>"
               "<td><strong>" (time-format/unparse time-formatter moving-time) "</strong></td>"
               "<td>" (time-format/unparse date-formatter date) "</td>"
               "</tr>")))

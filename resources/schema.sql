@@ -37,5 +37,6 @@ insert into challenges (name, start_date, end_date, activity_type, type) values 
 insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate løping challenge 2016', '2016-01-01', '2017-01-01', 'Run', 'totals');
 insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate ski challenge 2015/16', '2015-07-01', '2016-07-01', 'NordicSki', 'totals');
 insert into challenges (name, start_date, end_date, activity_type, type, field, results) values ('Iterate topp 5 lengste sykkelturer', '2000-01-01', '2100-01-01', 'Ride', 'top', 'distance', 5);
+insert into challenges (name, start_date, end_date, activity_type, type, field, results) values ('Iterate topp 5 klatringer sykkel', '2000-01-01', '2100-01-01', 'Ride', 'top', 'total_elevation_gain', 5);
 insert into challenges (name, start_date, end_date, activity_type, type, field, results) values ('Iterate topp 5 lengste løpeturer', '2000-01-01', '2100-01-01', 'Run', 'top', 'distance', 5);
 insert into challenges (name, start_date, end_date, activity_type, type, field, results) values ('Iterate topp 5 lengste skiturer', '2000-01-01', '2100-01-01', 'NordicSki', 'top', 'distance', 5);
