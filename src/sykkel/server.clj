@@ -1,6 +1,7 @@
 (ns sykkel.server
   (:require [clj-time.coerce :as time-coerce]
             [clj-time.core :as time]
+            [clj-time.format :as time-format]
             [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.adapter.jetty :refer [run-jetty]]
@@ -10,6 +11,8 @@
             [sykkel.db :as db]
             [sykkel.update-activities :as update-activities]))
 
+(def date-formatter (time-format/formatter "d/M yyyy"))
+
 (defn handle-strava-token [code error]
   (if (some? code) (auth/fetch-oauth-token code))
   (str (if (= error "access_denied")
@@ -17,15 +20,15 @@
          "<p>Alt ok</p>")
     "<a href=\"/\">Tilbake</a>"))
 
-(defn challenge-html [challenge]
+(defn challenge-totals-html [challenge]
   (let [name (:name challenge)
         description (:description challenge)
-        data (core/challenge-results (:id challenge))]
+        data (db/challenge-totals (:id challenge))]
     (str
       "<h1>" name "</h1>"
       (when description
         (str "<h2>" description "</h2>"))
-      "<h3> Totalt: <strong>"(core/sum data :distance) "km</strong></h3>"
+      "<h3> Totalt: <strong>"(core/sum data :distance) " km</strong></h3>"
       "<ol style=\"list-style-type: decimal;\">"
       (reduce
         (fn [list result]
@@ -33,12 +36,41 @@
             (str
               list
               "<li>"
-              (:name result) " <strong>" (:distance result) "km</strong>"
+              (:name result) " <strong>" (:distance result) " km</strong>"
               " <span style=\"color: " color ";\">●</span>"
               "</li>")))
         ""
         data)
       "</ol>")))
+
+(defn challenge-top-html [challenge]
+  (let [name (:name challenge)
+        description (:description challenge)
+        field (keyword (:field challenge))
+        data (db/challenge-top-results (:id challenge))]
+    (str
+      "<h1>" name "</h1>"
+      (when description
+        (str "<h2>" description "</h2>"))
+      "<ol style=\"list-style-type: decimal;\">"
+      (reduce
+        (fn [list result]
+          (let [color (if (:token result) "green" "red")
+                date (time-coerce/from-sql-date (:date result))]
+            (str
+              list
+              "<li>"
+              (:name result) " <strong>" (int (/ (field result) 1000)) " km</strong> - " (time-format/unparse date-formatter date)
+              " <span style=\"color: " color ";\">●</span>"
+              "</li>")))
+        ""
+        data)
+      "</ol>")))
+
+(defn challenge-html [challenge]
+  (case (:type challenge)
+    "totals" (challenge-totals-html challenge)
+    "top" (challenge-top-html challenge)))
 
 (defroutes app
            (GET "/" []

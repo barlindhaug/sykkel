@@ -28,28 +28,47 @@
 (defn user [athlete-id]
   (first
     (jdbc/query (create-connection-definition)
-      ["SELECT * FROM users WHERE strava_id = ?" athlete-id])))
+                ["SELECT * FROM users WHERE strava_id = ?" athlete-id])))
 
 (defn users []
   (jdbc/query (create-connection-definition)
               ["SELECT * FROM users"]))
 
-(defn challenge-results [challenge-id]
-  (jdbc/query (create-connection-definition)
-              ["SELECT u.name AS name, u.token AS token, TRUNC(SUM(a.distance) / 1000) AS distance
-                FROM activities a, users u, challenges c
-                WHERE a.athlete_id = u.strava_id
-                  AND a.start_date >= c.start_date
-                  AND a.start_date < c.end_date
-                  AND a.type = c.activity_type
-                  AND c.id = ?
-                GROUP BY a.athlete_id, u.name, u.token
-                ORDER BY distance DESC"
-               challenge-id]))
+(defn challenge [challenge-id]
+  (first
+    (jdbc/query (create-connection-definition)
+                ["SELECT * FROM challenges WHERE id = ?" challenge-id])))
 
 (defn challenges []
   (jdbc/query (create-connection-definition)
               ["SELECT * FROM challenges ORDER BY start_date DESC"]))
+
+(def join-challenges-sql
+  " FROM activities a, users u, challenges c
+   WHERE a.athlete_id = u.strava_id
+     AND a.start_date >= c.start_date
+     AND a.start_date < c.end_date
+     AND a.type = c.activity_type
+     AND c.id = ? ")
+
+(defn challenge-top-results [challenge-id]
+  (let [challenge (challenge challenge-id)
+        field (:field challenge)
+        limit (:results challenge)]
+    (jdbc/query (create-connection-definition)
+                [(str "SELECT u.name AS name, u.token AS token, " field ", a.start_date AS date"
+                       join-challenges-sql
+                      "ORDER BY " field " DESC
+                       LIMIT ?")
+                 challenge-id limit])))
+
+(defn challenge-totals [challenge-id]
+  (jdbc/query (create-connection-definition)
+              [(str "SELECT u.name AS name, u.token AS token, TRUNC(SUM(a.distance) / 1000) AS distance"
+                     join-challenges-sql
+                    "GROUP BY a.athlete_id, u.name, u.token
+                     ORDER BY distance DESC")
+               challenge-id]))
 
 (defn insert-row [table row]
   (try

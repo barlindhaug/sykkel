@@ -24,12 +24,18 @@ create table challenges (
     description text,
     start_date date,
     end_date date,
-    activity_type text
+    activity_type text,
+    type text,
+    field text,
+    results integer
 );
 
-insert into challenges (name, start_date, end_date, activity_type) values ('Iterate sykkel challenge 2015', '2015-01-01', '2016-01-01', 'Ride');
-insert into challenges (name, description, start_date, end_date, activity_type) values ('Iterate vintersykkel challenge 2015/16', 'Desember - Februar', '2015-12-01', '2016-03-01', 'Ride');
-insert into challenges (name, start_date, end_date, activity_type) values ('Iterate sykkel challenge 2016', '2016-01-01', '2017-01-01', 'Ride');
-insert into challenges (name, start_date, end_date, activity_type) values ('Iterate løping challenge 2015', '2015-01-01', '2016-01-01', 'Run');
-insert into challenges (name, start_date, end_date, activity_type) values ('Iterate løping challenge 2016', '2016-01-01', '2017-01-01', 'Run');
-insert into challenges (name, start_date, end_date, activity_type) values ('Iterate ski challenge 2015/16', '2015-07-01', '2016-07-01', 'NordicSki');
+insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate sykkel challenge 2015', '2015-01-01', '2016-01-01', 'Ride', 'totals');
+insert into challenges (name, description, start_date, end_date, activity_type, type) values ('Iterate vintersykkel challenge 2015/16', 'Desember - Februar', '2015-12-01', '2016-03-01', 'Ride', 'totals');
+insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate sykkel challenge 2016', '2016-01-01', '2017-01-01', 'Ride', 'totals');
+insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate løping challenge 2015', '2015-01-01', '2016-01-01', 'Run', 'totals');
+insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate løping challenge 2016', '2016-01-01', '2017-01-01', 'Run', 'totals');
+insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate ski challenge 2015/16', '2015-07-01', '2016-07-01', 'NordicSki', 'totals');
+insert into challenges (name, start_date, end_date, activity_type, type, field, results) values ('Iterate topp 5 lengste sykkelturer', '2000-01-01', '2100-01-01', 'Ride', 'top', 'distance', 5);
+insert into challenges (name, start_date, end_date, activity_type, type, field, results) values ('Iterate topp 5 lengste løpeturer', '2000-01-01', '2100-01-01', 'Run', 'top', 'distance', 5);
+insert into challenges (name, start_date, end_date, activity_type, type, field, results) values ('Iterate topp 5 lengste skiturer', '2000-01-01', '2100-01-01', 'NordicSki', 'top', 'distance', 5);
