@@ -21,13 +21,26 @@
          "<p>Alt ok</p>")
     "<a href=\"/\">Tilbake</a>"))
 
-(def header
+(defn header [current-page]
   (str
    "<div class=\"nav-container\">"
+     "<h1 class=\"title\">SYKKL</h1>"
      "<div class=\"nav\">"
-       "<a href=\"/ride\">Sykkel</a> | "
-       "<a href=\"/ski\">Ski</a> | "
-       "<a href=\"/run\">L&oslash;ping</a>"
+       "<a "
+         (when
+           (or
+            (= current-page "Ride")
+            (= current-page ""))
+            "class=\"current\"")
+         "href=\"/ride\">Sykkel</a> | "
+       "<a "
+         (when (= current-page "NordicSki")
+            "class=\"current\"")
+         "href=\"/ski\">Ski</a> | "
+       "<a "
+         (when (= current-page "Run")
+            "class=\"current\"")
+         "href=\"/run\">L&oslash;ping</a>"
      "</div>"
    "</div>"))
 
@@ -106,7 +119,7 @@
       "  <link href=\"/style.css\" rel=\"stylesheet\">"
       "</head>"
       "<body>"
-      header
+      (header type)
       (apply str (map challenge-html (db/challenges type)))
       footer
       "</body>"
