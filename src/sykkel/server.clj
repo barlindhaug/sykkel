@@ -24,8 +24,8 @@
 (defn header [current-page]
   (str
    "<div class=\"nav-container\">"
-     "<img src=\"https://dgalywyr863hv.cloudfront.net/pictures/clubs/64726/1467357/1/medium.jpg\" align=\"left\">"
-     "<h1 class=\"title\">SYKKL</h1>"
+     "<img src=\"https://dgalywyr863hv.cloudfront.net/pictures/clubs/64726/1467357/1/medium.jpg\">"
+     "<div class=\"title\">SYKKL</div>"
      "<div class=\"nav\">"
        "<a "
          (when
@@ -33,15 +33,15 @@
             (= current-page "Ride")
             (= current-page ""))
             "class=\"current\"")
-         "href=\"/ride\">Sykkel</a> | "
-       "<a "
-         (when (= current-page "NordicSki")
-            "class=\"current\"")
-         "href=\"/ski\">Ski</a> | "
+         "href=\"/ride\"><img src=\"/bicycle-icon-62045-128x96.png\" width=\"64\" height=\"48\"></a> "
        "<a "
          (when (= current-page "Run")
             "class=\"current\"")
-         "href=\"/run\">L&oslash;ping</a>"
+         "href=\"/run\"><img src=\"/running-man-icon-23712-128x128.png\" width=\"48\" height=\"48\"></a>"
+       "<a "
+         (when (= current-page "NordicSki")
+            "class=\"current\"")
+         "href=\"/ski\"><img src=\"/cross-country-skiing-icon-7551-128x128.png\" width=\"48\" height=\"48\"></a> "
      "</div>"
    "</div>"))
 
