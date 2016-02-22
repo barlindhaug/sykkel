@@ -137,7 +137,7 @@
         "top" (challenge-top-html challenge)))))
 
 (defn challenges-html [type]
-  (let [challenges (db/challenges type)]
+  (let [challenges (core/challenges type)]
     (update-activities/update-recent-club-activities)
     (str
       "<html>"

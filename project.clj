@@ -8,7 +8,8 @@
                  [compojure "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
                  [ring/ring-jetty-adapter "1.4.0"]]
-  :plugins [[lein-ring "0.8.10"]]
+  :plugins [[lein-ring "0.8.10"]
+            [lein-auto "0.1.2"]]
   :ring {:handler sykkel.server/app
          :auto-refresh? true}
   :main sykkel.server
