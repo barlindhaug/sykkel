@@ -150,7 +150,7 @@
       "</head>"
       "<body>"
       (header type)
-      (apply str (map challenge-html (db/challenges type)))
+      (apply str (map challenge-html challenges))
       footer
       "</body>"
       "</html>")))
