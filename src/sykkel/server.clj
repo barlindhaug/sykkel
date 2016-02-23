@@ -92,8 +92,14 @@
             "</tr>"))
         ""
         data)
-      "</table>"
-      "<p><strong>Totalt: "(core/sum data :distance) " km</strong></p>")))
+      "<tr class=\"totals\">"
+      "<td />"
+      "<td><strong>Totalt</strong></td>"
+      "<td><strong>" (core/sum data :distance) " km</strong></td>"
+      "<td></td>"
+      "<td><strong>" (core/sum data :climbed) " m</strong></td>"
+      "</tr>"
+      "</table>")))
 
 (defn challenge-top-html [challenge]
   (let [field (keyword (:field challenge))
