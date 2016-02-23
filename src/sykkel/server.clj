@@ -64,8 +64,8 @@
 
 (defn format-field [field result]
   (case field
-    :distance (str (int (/ (field result) 1000)) " km")
-    :total_elevation_gain (str (int (field result)) " m")))
+    :distance (str (core/format-number (int (/ (field result) 1000))) " km")
+    :total_elevation_gain (str (core/format-number (int (field result))) " m")))
 
 (defn challenge-totals-html [challenge]
   (let [data (db/challenge-totals (:id challenge))]
@@ -86,18 +86,18 @@
             (when (not (:token result))
               " <span style=\"color: red;\">●</span>")
             "</td>"
-            "<td><strong>" (:distance result) " km</strong></td>"
-            "<td><strong>" (:longest result) " km</strong></td>"
-            "<td><strong>" (:climbed result) " m</strong></td>"
+            "<td><strong>" (core/format-number (:distance result)) " km</strong></td>"
+            "<td><strong>" (core/format-number (:longest result)) " km</strong></td>"
+            "<td><strong>" (core/format-number (:climbed result)) " m</strong></td>"
             "</tr>"))
         ""
         data)
       "<tr class=\"totals\">"
       "<td />"
       "<td><strong>Totalt</strong></td>"
-      "<td><strong>" (core/sum data :distance) " km</strong></td>"
+      "<td><strong>" (core/format-number (core/sum data :distance)) " km</strong></td>"
       "<td></td>"
-      "<td><strong>" (core/sum data :climbed) " m</strong></td>"
+      "<td><strong>" (core/format-number (core/sum data :climbed)) " m</strong></td>"
       "</tr>"
       "</table>")))
 

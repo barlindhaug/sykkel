@@ -30,3 +30,8 @@
     (db/challenges type)
     (map convert-dates)
     (sort-challenges)))
+
+(defn format-number [number]
+  (if (> number 1000)
+    (str (int (/ number 1000)) "." (format "%03d" (int (mod number 1000))))
+    (str number)))

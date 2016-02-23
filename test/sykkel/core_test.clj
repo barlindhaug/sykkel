@@ -38,3 +38,13 @@
   (is (=
         (extract-ids (core/sort-challenges test-challenges))
         [2 3 1 0])))
+
+(deftest format-number-less-than-thousand
+  (is (=
+    (core/format-number 999M)
+    "999")))
+
+(deftest format-number-greater-than-thousand
+  (is (=
+    (core/format-number 123045M)
+    "123.045")))
