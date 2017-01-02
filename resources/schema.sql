@@ -34,6 +34,7 @@ create table challenges (
 insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate sykkel challenge 2015', '2015-01-01', '2016-01-01', 'Ride', 'totals');
 insert into challenges (name, description, start_date, end_date, activity_type, type) values ('Iterate vintersykkel challenge 2015/16', 'Desember - Februar', '2015-12-01', '2016-03-01', 'Ride', 'totals');
 insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate sykkel challenge 2016', '2016-01-01', '2017-01-01', 'Ride', 'totals');
+insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate sykkel challenge 2017', '2017-01-01', '2018-01-01', 'Ride', 'totals');
 insert into challenges (name, description, start_date, end_date, activity_type, type) values ('Iterate sykle til jobben 2016', '19. april - 17. juni', '2016-04-19', '2016-06-18', 'Ride', 'totals');
 insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate løping challenge 2015', '2015-01-01', '2016-01-01', 'Run', 'totals');
 insert into challenges (name, start_date, end_date, activity_type, type) values ('Iterate løping challenge 2016', '2016-01-01', '2017-01-01', 'Run', 'totals');
